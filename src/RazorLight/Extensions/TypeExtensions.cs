@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -20,10 +21,23 @@ namespace RazorLight.Extensions
             foreach (var propertyDescriptor in anonymousObject.GetType().GetTypeInfo().GetProperties())
             {
                 var obj = propertyDescriptor.GetValue(anonymousObject);
-                if (obj != null && obj.GetType().IsAnonymousType())
-                {
-                    obj = obj.ToExpando();
-                }
+                switch (obj?.GetType())
+				{
+					case Type t when t.IsAnonymousType():
+						obj = obj.ToExpando();
+						break;
+
+					case Type t when t.IsArray && t.GetElementType().IsAnonymousType():
+						var array = (IList) obj;
+						var expandoArray = new ExpandoObject[array.Count];
+						for (int ix = 0; ix < array.Count; ix++)
+						{
+							expandoArray[ix] = array[ix].ToExpando();
+						}
+
+						obj = expandoArray;
+						break;
+				}
                 expando.Add(propertyDescriptor.Name, obj);
             }
 

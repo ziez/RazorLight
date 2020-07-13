@@ -18,15 +18,16 @@ namespace RazorLight
 				   Instrumentation.InjectDirective.Register(builder);
 				   Instrumentation.ModelDirective.Register(builder);
 
-				   //In RazorLanguageVersion > 3.0 (at least netcore 3.0) the directives are registed out of the box.
+				   //In RazorLanguageVersion > 3.0 (at least netcore 3.0) the directives are registered out of the box.
 				   if (!RazorLanguageVersion.TryParse("3.0", out var razorLanguageVersion)
 					   || configuration.LanguageVersion.CompareTo(razorLanguageVersion) < 0)
 				   {
 					   NamespaceDirective.Register(builder);
 					   FunctionsDirective.Register(builder);
 					   InheritsDirective.Register(builder);
-					   SectionDirective.Register(builder);
+					   
 				   }
+				   SectionDirective.Register(builder);
 
 				   builder.Features.Add(new ModelExpressionPass());
 				   builder.Features.Add(new RazorLightTemplateDocumentClassifierPass());
